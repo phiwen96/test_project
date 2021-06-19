@@ -104,32 +104,15 @@ auto main () -> int
     };
     
     
-    auto login_menu = [&input] (auto&&... menus) -> void
-    {
-        cout << "1. username\n2. password\n\n >> ";
-        
-        cin >> input;
-        
-        force_input (input, regex ("[1-2]"));
-        
-        (([&input] (auto&& menu)
-        {
-            if (regex_match (input, menu.first))
-            {
-                menu.second ();
-            }
-        } (menus)), ...);
-    };
+   
     
     
-    auto get_user = [&users] ()
+    auto get_user = [&users] () -> int
     {
         auto email_input = string {};
         
         cout << "email >> ";
         cin >> email_input;
-        
-        
         
         auto email_match = users.emails.find (email_input);
         
@@ -140,7 +123,21 @@ auto main () -> int
             email_match = users.emails.find (email_input);
         }
         
+        int user_id = email_match -> second;
         
+        auto password = users.passwords.find (user_id)->second;
+        auto password_input = string {};
+        
+        cout << "password >> ";
+        cin >> password_input;
+
+        while (password_input != password)
+        {
+            cout << "wrong password, please try again\npassword >> ";
+            cin >> password_input;
+        }
+        
+        return user_id;
     };
     
     auto new_user_menu = [&input] (auto&&... a)
